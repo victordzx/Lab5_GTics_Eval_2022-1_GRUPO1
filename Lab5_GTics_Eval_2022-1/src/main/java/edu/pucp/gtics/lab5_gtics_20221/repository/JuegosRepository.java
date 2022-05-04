@@ -27,9 +27,9 @@ public interface JuegosRepository extends JpaRepository<Juegos,Integer> {
     @Query(value = "Insert INTO juegosxusuario (idusuario, idjuego, cantidad) VALUES (?,?,1)", nativeQuery = true)
     void registrarJuegoPorUser(int idusuario, int idjuego);
 
-    @Query(nativeQuery = true, value = "select * from juegos where idjuego not in (Select  j.idjuego from gameshop4.juegos j\n" +
-            "inner join gameshop4.juegosxusuario ju  on j.idjuego=ju.idjuego\n" +
-            "inner join gameshop4.usuarios u on ju.idusuario=u.idusuario\n" +
-            "inner join gameshop4.generos g on g.idgenero=j.idgenero Where u.idusuario = ?) order by nombre desc;")
+    @Query(nativeQuery = true, value = "SELECT * FROM juegos WHERE idjuego NOT IN (SELECT  j.idjuego FROM gameshop4.juegos j\n" +
+            "            INNER JOIN gameshop4.juegosxusuario ju  ON j.idjuego=ju.idjuego\n" +
+            "            INNER JOIN gameshop4.usuarios u ON ju.idusuario=u.idusuario\n" +
+            "            INNER JOIN gameshop4.generos g ON g.idgenero=j.idgenero WHERE u.idusuario = ? ORDER BY j.nombre DESC)")
     List<Juegos> obtenerJuegosLibres(int idusuario);
 }
