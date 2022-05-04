@@ -32,4 +32,6 @@ public interface JuegosRepository extends JpaRepository<Juegos,Integer> {
             "            INNER JOIN gameshop4.usuarios u ON ju.idusuario=u.idusuario\n" +
             "            INNER JOIN gameshop4.generos g ON g.idgenero=j.idgenero WHERE u.idusuario = ? ORDER BY j.nombre DESC)")
     List<Juegos> obtenerJuegosLibres(int idusuario);
+
+    List<Juegos> findAllByOrderByPrecioAsc();
 }
