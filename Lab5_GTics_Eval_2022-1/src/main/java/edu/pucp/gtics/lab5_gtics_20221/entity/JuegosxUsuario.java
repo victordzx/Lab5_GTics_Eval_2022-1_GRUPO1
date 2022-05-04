@@ -4,10 +4,11 @@ import edu.pucp.gtics.lab5_gtics_20221.entity.Juegos;
 import edu.pucp.gtics.lab5_gtics_20221.entity.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "juegosxusuario")
-public class JuegosxUsuario {
+public class JuegosxUsuario{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idjuegosxusuario", nullable = false)

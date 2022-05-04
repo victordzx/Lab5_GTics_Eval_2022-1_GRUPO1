@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 
 public interface JuegosRepository extends JpaRepository<Juegos,Integer> {
-    @Query(value = "Select  j.idjuego, j.nombre, j.descripcion, g.nombre as genero, j.image as imageURL from gameshop3.juegos j " +
+    @Query(value = "Select  j.idjuego, j.nombre, j.descripcion, g.nombre as genero, j.image as imageURL from gameshop4.juegos j " +
             "inner join gameshop4.juegosxusuario ju  on j.idjuego=ju.idjuego " +
             "inner join gameshop4.usuarios u on ju.idusuario=u.idusuario " +
             "inner join gameshop4.generos g on g.idgenero=j.idgenero Where u.idusuario= ?",nativeQuery = true)
@@ -26,4 +26,10 @@ public interface JuegosRepository extends JpaRepository<Juegos,Integer> {
     @Modifying
     @Query(value = "Insert INTO juegosxusuario (idusuario, idjuego, cantidad) VALUES (?,?,1)", nativeQuery = true)
     void registrarJuegoPorUser(int idusuario, int idjuego);
+
+    @Query(nativeQuery = true, value = "select * from juegos where idjuego not in (Select  j.idjuego from gameshop4.juegos j\n" +
+            "inner join gameshop4.juegosxusuario ju  on j.idjuego=ju.idjuego\n" +
+            "inner join gameshop4.usuarios u on ju.idusuario=u.idusuario\n" +
+            "inner join gameshop4.generos g on g.idgenero=j.idgenero Where u.idusuario = ?) order by nombre desc;")
+    List<Juegos> obtenerJuegosLibres(int idusuario);
 }

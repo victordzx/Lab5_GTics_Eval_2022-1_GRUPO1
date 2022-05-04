@@ -36,7 +36,18 @@ public class UserController {
 
     @GetMapping("/user/signInRedirect")
     public String signInRedirect(Authentication auth, HttpSession session){
-        return "redirect:/juegos/lista";
+
+        String rol = "";
+        for (GrantedAuthority role : auth.getAuthorities()){
+            rol = role.getAuthority();
+            break;
+        }
+
+        if (rol.equals("ADMIN")){
+            return "redirect:/juegos/lista";
+        }else {
+            return "redirect:/juegos";
+        }
     }
 
 }

@@ -15,11 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/juegos")
 public class JuegosController {
 
     @Autowired
@@ -38,26 +38,39 @@ public class JuegosController {
     UserRepository userRepository;
 
     @GetMapping(value = {"/juegos/lista"})
-    public String listaJuegos (Model model, HttpSession session){
+    public String listaJuegos (Authentication auth, Model model){
 
-        User sessionUser = (User) session.getAttribute("usuario");
-
-        if(sessionUser.getAutorizacion().equals("ADMIN")) {
-            model.addAttribute("listaJuegos", juegosRepository.findAll());
+        String rol = "";
+        for (GrantedAuthority role : auth.getAuthorities()) {
+            rol = role.getAuthority();
+            break;
+        }
+        if (rol.equals("ADMIN")) {
+            model.addAttribute("listaJuegos", juegosRepository.findAll(Sort.by("precio")));
             return "juegos/lista";
-        }else{
-            model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosPorUser(sessionUser.getIdusuario()));
+        } else {
+            model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosPorUser(1));
             return "juegos/comprado";
         }
 
     }
 
-    @GetMapping(value = {"", "/", "/vista"})
-    public String vistaJuegos (Model model){
+    @GetMapping(value = {"", "/","/juegos", "juegos/vista"})
+    public String vistaJuegos (Authentication auth, Model model){
 
-        List<Juegos> listaJuegos = juegosRepository.listaJuegosDescendente();
-        model.addAttribute("listaJuegos", listaJuegos);
-        return "juegos/vista";
+        String rol = "";
+        for (GrantedAuthority role : auth.getAuthorities()) {
+            rol = role.getAuthority();
+            break;
+        }
+
+        if (rol.equals("USER")) {
+            model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosLibres(1));
+            return "juegos/vista";
+        }else{
+            model.addAttribute("listaJuegos",juegosRepository.listaJuegosDescendente());
+            return "juegos/vista";
+        }
 
     }
 
