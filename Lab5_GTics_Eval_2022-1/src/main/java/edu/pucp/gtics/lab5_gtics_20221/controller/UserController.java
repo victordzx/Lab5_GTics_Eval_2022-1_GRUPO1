@@ -43,6 +43,9 @@ public class UserController {
             break;
         }
 
+        User user = userRepository.findByCorreo(auth.getName());
+        session.setAttribute("usuario",user);
+
         if (rol.equals("ADMIN")){
             return "redirect:/juegos/lista";
         }else {

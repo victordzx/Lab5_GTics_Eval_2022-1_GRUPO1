@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -58,18 +59,14 @@ public class JuegosController {
 
     @GetMapping(value = {"", "/","/juegos", "juegos/vista"})
     public String vistaJuegos (Authentication auth, Model model, HttpSession session) {
-
         if(session.getAttribute("usuario") == null) {
             model.addAttribute("listaJuegos", juegosRepository.listaJuegosDescendente());
         }
         else{
-            // bug
             User user = (User) session.getAttribute("usuario");
             model.addAttribute("listaJuegos",juegosRepository.obtenerJuegosLibres(user.getIdusuario()));
         }
-
         return "juegos/vista";
-
     }
 
     @GetMapping("/juegos/nuevo")
