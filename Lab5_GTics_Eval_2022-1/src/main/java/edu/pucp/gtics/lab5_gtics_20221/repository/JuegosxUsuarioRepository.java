@@ -11,8 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
-
-public  JuegosxUsuarioRepository {
-
+public interface JuegosxUsuarioRepository extends JpaRepository<JuegosxUsuario, Integer> {
 }

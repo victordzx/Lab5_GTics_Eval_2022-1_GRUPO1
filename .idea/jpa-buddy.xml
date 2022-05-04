@@ -2,5 +2,8 @@
 <project version="4">
   <component name="JpaBuddyIdeaProjectConfig">
     <option name="defaultUnitInitialized" value="true" />
+    <option name="reverseEngineeringLastDbConnectionId" value="495059e8-1f04-4cb5-aca4-1881b5731183" />
+    <option name="reLastEntityCreationPackage" value="Lab5_GTics_Eval_2022-1/src/main/java/edu/pucp/gtics/lab5_gtics_20221" />
+    <option name="newEntityIdStrategy" />
   </component>
 </project>
