@@ -11,6 +11,41 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.sql.DataSource;
 
 
-public class WebSecurityConfig  {
+@Configuration
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    DataSource dataSource;
+
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+
+        httpSecurity.formLogin()
+                .loginPage("/user/signIn") // for the Controlller
+                .loginProcessingUrl("/processLogin") // for the POST request of the login form
+
+                .defaultSuccessUrl("/user/signInRedirect", true);
+
+        httpSecurity.logout()
+                .logoutSuccessUrl("/");
+
+        httpSecurity.authorizeRequests()
+                .antMatchers("/juegos","/juegos/**").hasAnyAuthority("ADMIN","USER")
+                .anyRequest().permitAll();
+
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(new BCryptPasswordEncoder())
+
+                .usersByUsernameQuery("select correo, password, enabled from usuarios WHERE correo = ?")
+                .authoritiesByUsernameQuery("select correo, autorizacion from usuarios where enabled=0x01 and correo = ?");
+
+
+    }
 
 }
