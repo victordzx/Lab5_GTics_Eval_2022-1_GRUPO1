@@ -45,6 +45,7 @@ public class JuegosController {
             rol = role.getAuthority();
             break;
         }
+
         if (rol.equals("ADMIN")) {
             model.addAttribute("listaJuegos", juegosRepository.findAll(Sort.by("precio")));
             return "juegos/lista";
@@ -56,21 +57,18 @@ public class JuegosController {
     }
 
     @GetMapping(value = {"", "/","/juegos", "juegos/vista"})
-    public String vistaJuegos (Authentication auth, Model model){
+    public String vistaJuegos (Authentication auth, Model model, HttpSession session) {
 
-        String rol = "";
-        for (GrantedAuthority role : auth.getAuthorities()) {
-            rol = role.getAuthority();
-            break;
+        if(session.getAttribute("usuario") == null) {
+            model.addAttribute("listaJuegos", juegosRepository.listaJuegosDescendente());
+        }
+        else{
+            // bug
+            User user = (User) session.getAttribute("usuario");
+            model.addAttribute("listaJuegos",juegosRepository.obtenerJuegosLibres(user.getIdusuario()));
         }
 
-        if (rol.equals("USER")) {
-            model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosLibres(1));
-            return "juegos/vista";
-        }else{
-            model.addAttribute("listaJuegos",juegosRepository.listaJuegosDescendente());
-            return "juegos/vista";
-        }
+        return "juegos/vista";
 
     }
 

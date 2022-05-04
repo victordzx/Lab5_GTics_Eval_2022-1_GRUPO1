@@ -28,12 +28,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/user/signInRedirect", true);
 
         httpSecurity.logout()
-                .logoutSuccessUrl("/");
+                .logoutSuccessUrl("/").invalidateHttpSession(true).deleteCookies("JSESSIONID");
 
         httpSecurity.authorizeRequests()
                 .antMatchers("/plataformas","/plataformas/**").hasAuthority("ADMIN")
                 .antMatchers("/distribuidoras","/distribuidoras/**").hasAuthority("ADMIN")
                 .antMatchers("/juegos","/juegos/**").hasAnyAuthority("ADMIN","USER")
+                .antMatchers("/vista").hasAnyAuthority("USER")
                 .anyRequest().permitAll();
 
     }
@@ -45,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(new BCryptPasswordEncoder())
 
                 .usersByUsernameQuery("select correo, password, enabled from usuarios WHERE correo = ?")
-                .authoritiesByUsernameQuery("select correo, autorizacion from usuarios where enabled=0x01 and correo = ?");
+                .authoritiesByUsernameQuery("select correo, autorizacion from usuarios where enabled=1 and correo = ?");
 
 
     }
