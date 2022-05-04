@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/base.html :: head(title='Gameshop4 - Iniciar Sesión')"></head>
+<head th:replace="fragments/base.html :: head(title='GameShop4 - Iniciar Sesión')"></head>
 <body>
 <div class="container">
     <div class="row justify-content-md-center mt-5">
         <div class="col col-xs-12 col-md-6">
             <div class="card">
-                <div class="card-header navbar-light text-center" style="background-color: #eaedfc;">
+                <div class="card-header navbar-light text-center" style="background-color: #e3f2fd;">
                     <a class="navbar-brand" th:href="@{/}">
                         <img th:src="@{/img/icon.png}" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
                         GameShop4
@@ -16,16 +16,19 @@
                     <div th:if="${param.error}" class="alert alert-danger" role="alert">
                         Acceso Denegado
                     </div>
-                    <form class="row g-3" method="post">
-                        <div class="form-group">
-                            <label for="">Usuario</label>
+                    <form th:action="@{/processLogin}" method="post">
+                        <!--- Usuario --->
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label for="username">Usuario</label>
+                            <input class="form-control mb-4" id="username" placeholder="Correo" type="text" name="username">
                         </div>
-                        <div class="form-group">
-                            <label for="">Contraseña</label>
+                        <!--- Contraseña --->
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                            <label for="password">Password</label>
+                            <input class="form-control mb-4" id="password" placeholder="Contraseña" type="password" name="password">
                         </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
-                        </div>
+                        <!--- Botón --->
+                        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
                     </form>
                 </div>
             </div>
