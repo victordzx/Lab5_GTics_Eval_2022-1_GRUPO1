@@ -19,7 +19,7 @@
                             <div class="card" >
                                 <img class="card-img-top" th:src="${juegos.getImage()}" alt="Card image cap">
                                 <span class="position-absolute top-100 end-0 translate-middle badge bg-danger fs-6" th:text="|S/.  ${juegos.getPrecio()}|"></span>
-                                <a class="btn btn-primary" th:title="Comprar"><span class="bi bi-plus-circle"></span> Comprar</a>
+                                <a class="btn btn-primary" th:title="Comprar" th:href="@{'/carrito/lista?id='+${juegos.getIdjuego()}}"><span class="bi bi-plus-circle"></span> Comprar</a>
                                 <div class="card-body">
                                     <h5 class="card-title" >
                                         <span th:text="${juegos.getNombre()}"></span>
