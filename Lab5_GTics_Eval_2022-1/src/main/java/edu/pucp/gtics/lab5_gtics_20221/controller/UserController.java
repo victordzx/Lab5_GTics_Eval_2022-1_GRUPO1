@@ -23,6 +23,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Controller
 public class UserController {
+
+    @Autowired
+    UserRepository userRepository;
+
+    @GetMapping("/user/signIn")
+    public String signIn(){
+        return "user/signIn";
+    }
+
+    @GetMapping("/user/signInRedirect")
+    public String signInRedirect(Authentication auth, HttpSession session){
+        return "redirect:/juegos/lista";
+    }
 
 }
