@@ -39,19 +39,15 @@ public class JuegosController {
     UserRepository userRepository;
 
     @GetMapping(value = {"/juegos/lista"})
-    public String listaJuegos (Authentication auth, Model model){
+    public String listaJuegos (Authentication auth, Model model, HttpSession session){
 
-        String rol = "";
-        for (GrantedAuthority role : auth.getAuthorities()) {
-            rol = role.getAuthority();
-            break;
-        }
+        User user = (User) session.getAttribute("usuario");
 
-        if (rol.equals("ADMIN")) {
+        if (user.getAutorizacion().equalsIgnoreCase("ADMIN")) {
             model.addAttribute("listaJuegos", juegosRepository.findAll(Sort.by("precio")));
             return "juegos/lista";
         } else {
-            model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosPorUser(1));
+            model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosPorUser(user.getIdusuario()));
             return "juegos/comprado";
         }
 
@@ -59,12 +55,17 @@ public class JuegosController {
 
     @GetMapping(value = {"", "/","/juegos", "juegos/vista"})
     public String vistaJuegos (Authentication auth, Model model, HttpSession session) {
+
         if(session.getAttribute("usuario") == null) {
             model.addAttribute("listaJuegos", juegosRepository.listaJuegosDescendente());
         }
         else{
             User user = (User) session.getAttribute("usuario");
-            model.addAttribute("listaJuegos",juegosRepository.obtenerJuegosLibres(user.getIdusuario()));
+            if(user.getAutorizacion().equalsIgnoreCase("USER")){
+                model.addAttribute("listaJuegos",juegosRepository.obtenerJuegosLibres(user.getIdusuario()));
+            }else{
+                model.addAttribute("listaJuegos", juegosRepository.listaJuegosDescendente());
+            }
         }
         return "juegos/vista";
     }
