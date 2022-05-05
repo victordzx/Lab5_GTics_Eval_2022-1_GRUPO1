@@ -45,6 +45,8 @@ public class UserController {
 
         User user = userRepository.findByCorreo(auth.getName());
         session.setAttribute("usuario",user);
+        session.setAttribute("carrito", new ArrayList<Juegos>());
+        session.setAttribute("ncarrito", 0);
 
         if (rol.equals("ADMIN")){
             return "redirect:/juegos/lista";

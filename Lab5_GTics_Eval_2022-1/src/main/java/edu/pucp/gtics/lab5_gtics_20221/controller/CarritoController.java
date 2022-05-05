@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -37,46 +38,79 @@ public class CarritoController {
     @Autowired
     JuegosxUsuarioRepository juegosxUsuarioRepository;
 
+    // Lista de juegos en el carrito
+    @GetMapping(value = {"/lista"})
+    public String listaCarrito(Model model, Authentication auth) {
+        return "carrito/lista";
+    }
 
-    @GetMapping(value = {"/carrito/lista"})
-    public String listaCarrito (Model model, Authentication auth) {
+    // Compramos los juegos del carrito
+    @GetMapping(value = {"/comprar"})
+    public String comprarCarrito(HttpSession session, RedirectAttributes attr) {
+        List<Juegos> carrito = (List<Juegos>) session.getAttribute("carrito");
+        User user = (User) session.getAttribute("usuario");
+        List<JuegosxUsuario> listaCompras = new ArrayList<>();
 
-        String rol = "";
-        for (GrantedAuthority role : auth.getAuthorities()) {
-            rol = role.getAuthority();
-            break;
+        if (carrito.size() == 0) {
+            attr.addFlashAttribute("msg", "Carrito vacío");
+            return "carrito/lista";
         }
 
-        if (rol.equals("ADMIN")) {
-            model.addAttribute("listaCarrito", juegosxUsuarioRepository.findAll(Sort.by("precio")));
-            return "carrito/lista";
-        } else {
-            model.addAttribute("listaCarrito", juegosxUsuarioRepository.obtenerJuegosPorUser(1));
-            return "carrito/lista";
+        for (Juegos index : carrito) {
+            JuegosxUsuario juegxuser = new JuegosxUsuario();
+            juegxuser.setIdjuego(index);
+            juegxuser.setIdusuario(user);
+            listaCompras.add(juegxuser);
         }
-    }
-    }
+        juegosxUsuarioRepository.saveAll(listaCompras);
+        session.setAttribute("carrito", new ArrayList<Juegos>());
+        session.setAttribute("ncarrito", 0);
+        attr.addFlashAttribute("msg", "Juegos comprados con éxito");
 
-    /*public void nuevoCarrito(@RequestParam("id") int id, ...){
-
-       return "redirect:/vista";
-    }
-    public void editarCarrito(  ){
-
-        //return "redirect:/juegos/lista";
+        return "carrito/lista";
     }
 
-    public void borrarCarrito(){
+    // Eliminamos un juego del carrito
+    @GetMapping(value = {"/borrar"})
+    public String borrarCarrito(@RequestParam("id") String id, HttpSession session) {
 
-        //return "redirect:/carrito/lista";
+        List<Juegos> listaCarrito =(List<Juegos>) session.getAttribute("carrito");
+
+        int i =0;
+        for (Juegos juego : listaCarrito){
+            if (juego.getIdjuego() == listaCarrito.get(i).getIdjuego()){
+                listaCarrito.remove(i);
+                break;
+            }
+            i++;
+        }
+
+        session.setAttribute("carrito",listaCarrito);
+        session.setAttribute("ncarrito",listaCarrito.size()); // nuevo tamaño
+
+        return "redirect:/carrito/lista";
     }
 
-    public void anadircarrito(){
+    // Agregamos un juego al carrito
+    @GetMapping(value = {"/anadir"})
+    public String anadircarrito(@RequestParam("id") String id, HttpSession session, RedirectAttributes attr) {
 
-        //return "redirect:/carrito/lista";
+        if (session.getAttribute("carrito") == null) {
+            // carrito vacío
+            List<Juegos> listaCarrito = new ArrayList<>();
+            listaCarrito.add(juegosRepository.findById(Integer.parseInt(id)).get());
+            session.setAttribute("carrito",listaCarrito);
+            session.setAttribute("ncarrito",1); // valor inicial
+            return "redirect:/juegos/vista";
+        }else{
+            // carrito ya lleno
+            List<Juegos> listaCarrito = (List<Juegos>) session.getAttribute("carrito");
+            listaCarrito.add(juegosRepository.findById(Integer.parseInt(id)).get());
+            session.setAttribute("carrito",listaCarrito);
+            session.setAttribute("ncarrito",listaCarrito.size()); // tamaño del carrito
+        }
+
+        return "redirect:/juegos/vista";
     }
 
 }
-
-
- */
