@@ -76,7 +76,7 @@ public class CarritoController {
 
         List<Juegos> listaCarrito =(List<Juegos>) session.getAttribute("carrito");
 
-        int i =0;
+        int i=0;
         for (Juegos juego : listaCarrito){
             if (juego.getIdjuego() == listaCarrito.get(i).getIdjuego()){
                 listaCarrito.remove(i);
