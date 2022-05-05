@@ -41,12 +41,12 @@ public class JuegosController {
     @GetMapping(value = {"/juegos/lista"})
     public String listaJuegos (Authentication auth, Model model, HttpSession session){
 
-        User user = (User) session.getAttribute("usuario");
+        User user = (User) session.getAttribute("usuario"); // usuario logueado
 
         if (user.getAutorizacion().equalsIgnoreCase("ADMIN")) {
             model.addAttribute("listaJuegos", juegosRepository.findAll(Sort.by("precio")));
             return "juegos/lista";
-        } else {
+        } else { // USER
             model.addAttribute("listaJuegos", juegosRepository.obtenerJuegosPorUser(user.getIdusuario()));
             return "juegos/comprado";
         }
@@ -56,13 +56,17 @@ public class JuegosController {
     @GetMapping(value = {"", "/","/juegos", "juegos/vista"})
     public String vistaJuegos (Authentication auth, Model model, HttpSession session) {
 
+        // Usuario no logueado
         if(session.getAttribute("usuario") == null) {
             model.addAttribute("listaJuegos", juegosRepository.listaJuegosDescendente());
         }
+        // Usuario logueado
         else{
             User user = (User) session.getAttribute("usuario");
+            // USER
             if(user.getAutorizacion().equalsIgnoreCase("USER")){
                 model.addAttribute("listaJuegos",juegosRepository.obtenerJuegosLibres(user.getIdusuario()));
+            // ADMIN
             }else{
                 model.addAttribute("listaJuegos", juegosRepository.listaJuegosDescendente());
             }
